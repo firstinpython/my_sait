@@ -14,10 +14,10 @@ class SignIn_User(AuthenticationForm):
 class SignUp_User(UserCreationForm):
     class Meta:
         model = Users
-        fields = ("username", "first_name", "last_name", "email", "age", "password1", "password2")
+        fields = ("username", "first_name", "last_name", "email", "password1", "password2")
 
 
 class Profile(UserChangeForm):
     class Meta:
         model = Users
-        fields = ("username", "first_name", "last_name", "age", "email")
+        fields = ("username", "first_name", "last_name",  "email")

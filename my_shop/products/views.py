@@ -1,43 +1,22 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.core.paginator import Paginator
 from .models import Product
-
+from django.views.generic import ListView
+from .filters import ProductFilter
 
 # Create your views here.
-def get_params(params, products):
-    fbrand = {}
-    for product in products:
-        fbrand[product.brand.name] = product.brand.name
-    dict_params = {
-        "sort": {
-            "priceup": "-price",
-            "pricedown": "price"
-        },
-        "fdlvt": {
-            "24": 1,
-            "48": 2,
-            "72": 3
-        },
-        "fbrand": fbrand
-    }
-    for key, value in params.items():
-        print(key)
-        if key == "sort":
-            if value in [v for v in dict_params[key]]:
-                products = products.order_by(dict_params[key][value])
-        if key == "fdlvt":
-            if value in [v for v in dict_params[key]]:
-                products = products.filter(delivery_time__lte=dict_params[key][value])
-        if key == "fbrand":
-            if value in [v for v in dict_params[key]]:
-                products = products.filter(brand__name=dict_params[key][value])
 
-    return products
+class ProductListView(ListView):
+    paginate_by = 2
+    model = Product
+    template_name = 'products/products.html'
+    context_object_name = 'products'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = ProductFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
 
-def products_view(requests):
-    products = Product.objects.all()
-    params: dict = requests.GET
-    products_f = get_params(params, products)
-    print(products_f)
-    return HttpResponse("ok")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context

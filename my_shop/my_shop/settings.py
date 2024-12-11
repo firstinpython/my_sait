@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "mptt",
     "django_mptt_admin",
-    "django_filters"
+    "django_filters",
+    "chat"
 ]
 
 MIDDLEWARE = [
@@ -74,7 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "my_shop.wsgi.application"
-
+ASGI_APPLICATION = "my_shop.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -83,6 +86,11 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 

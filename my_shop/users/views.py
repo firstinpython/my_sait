@@ -1,43 +1,43 @@
-from django.shortcuts import render
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import auth
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
+from django.views.generic.edit import CreateView
 from django.contrib.auth.decorators import login_required
+
+
 from .forms import SignIn_User, SignUp_User,Profile
 from .models import Users
 # Create your views here.
 
-def sign_in(request):
-    if request.method == "POST":
-        form = SignIn_User(data=request.POST)
-        if form.is_valid():
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = auth.authenticate(username=username, password=password)
-            if user:
-                auth.login(request,user)
-                return HttpResponse("ok")
-        return HttpResponse("no ok")
-    form = SignIn_User()
-    return render(request,"users/sign_in2.html",context={"form":form})
 
+class LoginUser(LoginView):
+    form_class = SignIn_User
+    template_name = 'users/sign_in.html'
 
-def sign_up(request):
-    if request.method == "POST":
-        form = SignUp_User(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("ok")
-    form = SignUp_User()
-    return render(request,"users/sign_up.html",context={"form":form})
+    def get_success_url(self):
+        return reverse_lazy('product:product')
 
-@login_required()
-def profile(request):
-    if request.method == "POST":
-        form = Profile(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("ok")
-        else:
-            return HttpResponse(form.errors)
-    form = Profile()
-    return render(request,"users/profile.html",context={"form":form})
+class UserRegistrationView(CreateView):
+    model = Users
+    template_name = 'users/sign_up.html'
+    form_class = SignUp_User
+    success_url = reverse_lazy('product:product')
+
+class UserProfileView(UserPassesTestMixin,UpdateView):
+    model = Users
+    form_class =  SignUp_User
+    template_name = 'users/profile.html'
+
+    def get_success_url(self):
+        return reverse_lazy('users:profile',args=(self.object.id,))
+
+    def test_func(self):
+        return self.request.user.is_authenticated
+
+    def handle_no_permission(self):
+        return redirect('users:sign_in')
+

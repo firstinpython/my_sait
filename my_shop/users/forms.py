@@ -4,8 +4,7 @@ from .models import Users
 
 
 class SignIn_User(AuthenticationForm):
-    # username = forms.CharField(widget=forms.TextInput())
-    # password = forms.CharField(widget=forms.PasswordInput())
+
     class Meta:
         model = Users
         fields = ("username", "password")

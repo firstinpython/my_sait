@@ -10,7 +10,7 @@ class Product(models.Model):
     price = models.PositiveIntegerField(verbose_name="price",
                                         validators=[MinValueValidator(100), MaxValueValidator(100000)])
     quantity = models.PositiveIntegerField(verbose_name="quantity", validators=[MinValueValidator(1)])
-    image = models.FileField(verbose_name="image", upload_to="product_image",validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'webp', 'jpeg', 'gif'))])
+    image = models.FileField(verbose_name="image", upload_to="product_image",null=True)
     is_published = models.BooleanField(default=True)
     category = TreeForeignKey('Category', on_delete=models.CASCADE)
     delivery_time = models.PositiveIntegerField(verbose_name="dlvtime")

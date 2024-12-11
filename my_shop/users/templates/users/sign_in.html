@@ -5,6 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-  {{form.as_p}}
+<form action="" method="post">
+    {% csrf_token %}
+      {{form.as_p}}
+<button typed="submit">sen</button>
+</form>
+
 </body>
 </html>
